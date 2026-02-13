@@ -1,5 +1,3 @@
-<img width="1930" height="1170" alt="Blank diagram (1)" src="https://github.com/user-attachments/assets/721b5cf7-4513-432c-a551-aa0420e3f99c" /># ER Diagram – Mini Digital Banking
-
 Entities:
 
 User
