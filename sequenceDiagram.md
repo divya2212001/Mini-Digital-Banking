@@ -20,7 +20,7 @@ Participants:
 
 ------------------------------------------------------------------
 
-1️⃣ Customer initiates transfer
+Customer initiates transfer
 
 Customer → ClientApp  
 enterTransferDetails(receiverId, amount)
@@ -33,7 +33,7 @@ transfer(senderId, receiverId, amount)
 
 ------------------------------------------------------------------
 
-2️⃣ Fetch Sender Account
+Fetch Sender Account
 
 TransactionService → AccountRepository  
 findById(senderId)
@@ -49,7 +49,7 @@ return senderAccount
 
 ------------------------------------------------------------------
 
-3️⃣ Fetch Receiver Account
+Fetch Receiver Account
 
 TransactionService → AccountRepository  
 findById(receiverId)
@@ -65,7 +65,7 @@ return receiverAccount
 
 ------------------------------------------------------------------
 
-4️⃣ Validate Transfer
+Validate Transfer
 
 alt
 
