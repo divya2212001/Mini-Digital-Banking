@@ -24,4 +24,5 @@ Admin:
 - Activate Account
 - Monitor Transactions
 
-<img width="902" height="752" alt="image" src="https://github.com/user-attachments/assets/be51f836-ed80-427f-ab7f-c7ae640e2aed" />
+<img width="801" height="664" alt="image" src="https://github.com/user-attachments/assets/c1718a58-cd50-4d70-889c-9923f507b346" />
+
