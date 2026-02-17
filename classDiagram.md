@@ -140,13 +140,17 @@ Account (1)  -----------  (0..*) FixedDeposit
 
 
 -------------------------------------------------------------
-Summary of OOP Concepts Used
+OOP Concepts Used
 -------------------------------------------------------------
 
 • Inheritance → Customer & Admin inherit from User
+
 • Inheritance → SavingsAccount inherits from Account
+
 • Encapsulation → Balance managed via deposit/withdraw methods
+
 • Abstraction → Core banking behaviors defined in Account
+
 • Enum usage → AccountStatus improves modeling clarity
 
 <img width="900" height="847" alt="image" src="https://github.com/user-attachments/assets/f033b2e3-952c-4329-8eda-688570fadbc4" />
