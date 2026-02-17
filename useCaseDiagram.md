@@ -23,3 +23,6 @@ Admin:
 - Freeze Account
 - Activate Account
 - Monitor Transactions
+
+<img width="5740" height="4338" alt="Simple Use case diagram" src="https://github.com/user-attachments/assets/ba1b6ede-0473-4563-8a47-fbe3dbf0a1eb" />
+
