@@ -24,5 +24,4 @@ Admin:
 - Activate Account
 - Monitor Transactions
 
-<img width="5740" height="4338" alt="Simple Use case diagram" src="https://github.com/user-attachments/assets/ba1b6ede-0473-4563-8a47-fbe3dbf0a1eb" />
-
+<img width="902" height="752" alt="image" src="https://github.com/user-attachments/assets/be51f836-ed80-427f-ab7f-c7ae640e2aed" />
