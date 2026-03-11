@@ -85,8 +85,8 @@ npx tsc --init
 3. Configure environment variables (create .env file in backend directory):
 
 ```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017/mini-banking
+PORT=3001
+MONGODB_URI=mongodb://localhost:3001/mini-banking
 JWT_SECRET=your-secret-key
 ```
 
