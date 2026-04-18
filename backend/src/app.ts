@@ -20,11 +20,16 @@ if (process.env.CLIENT_ORIGIN) {
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) {
-        callback(null, true);
-        return;
+      if (!origin) return callback(null, true);
+
+      const isLocal = allowedOrigins.has(origin);
+      const isVercelPreview = origin.endsWith(".vercel.app");
+
+      if (isLocal || isVercelPreview) {
+        return callback(null, true);
       }
-      callback(null, allowedOrigins.has(origin));
+
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
