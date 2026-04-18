@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+
+const inputClass =
+  "w-full rounded-xl bg-white border border-slate-300 px-3 py-2.5 text-black placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-bank-primary/50";
 
 export default function Login() {
   const { login } = useAuth();
@@ -28,31 +32,37 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900/60 p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold text-slate-100 mb-2">Welcome back</h1>
-        <p className="text-sm text-slate-500 mb-6">Sign in to your MiniBank account</p>
+    <div className="min-h-screen bg-bank-bg flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_0%,rgba(20,184,166,0.12),transparent)]" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative w-full max-w-md rounded-3xl border border-slate-200/80 bg-white/95 p-8 shadow-2xl backdrop-blur-xl card-hover"
+      >
+        <p className="text-center text-sm font-bold text-bank-primary mb-6">NeoBank Pro</p>
+        <h1 className="text-2xl font-semibold text-black mb-2">Welcome back</h1>
+        <p className="text-sm text-slate-600 mb-6">Sign in to continue</p>
         {error && (
-          <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
             {error}
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs uppercase text-slate-500 mb-1">Email</label>
+            <label className="block text-xs uppercase text-black font-medium mb-1">Email</label>
             <input
               type="email"
-              className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+              className={inputClass}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
           <div>
-            <label className="block text-xs uppercase text-slate-500 mb-1">Password</label>
+            <label className="block text-xs uppercase text-black font-medium mb-1">Password</label>
             <input
               type="password"
-              className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+              className={inputClass}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -61,18 +71,18 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-emerald-500 py-2.5 font-semibold text-slate-950 hover:bg-emerald-400 disabled:opacity-60"
+            className="w-full rounded-xl bg-bank-primary py-2.5 font-semibold text-white hover:bg-teal-600 disabled:opacity-60 transition-all shadow-lg shadow-bank-primary/25"
           >
             {submitting ? "Signing in…" : "Sign in"}
           </button>
         </form>
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-6 text-center text-sm text-black">
           No account?{" "}
-          <Link to="/register" className="text-emerald-400 hover:underline">
+          <Link to="/register" className="text-bank-primary font-semibold hover:underline">
             Register
           </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

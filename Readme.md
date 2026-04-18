@@ -1,6 +1,6 @@
-# Mini Digital Banking System
+# NeoBank Pro (Mini Digital Banking)
 
-A full-stack **digital banking demo** with a **TypeScript / Express** backend (clean architecture, OOP, design patterns) and a **React (JavaScript)** + **Tailwind CSS** frontend. It demonstrates JWT authentication, savings operations, transfers, fixed deposits, fraud flagging on transactions, PDF statements, and simulated email logging.
+A full-stack **digital banking demo** with a **TypeScript / Express** backend (clean architecture, OOP, design patterns) and a premium **React (JavaScript)** + **Tailwind CSS** frontend (glassmorphism, Recharts, Framer Motion, Lucide). It demonstrates JWT authentication, savings operations, transfers, fixed deposits, fraud flagging on transactions, PDF statements, and simulated email logging.
 
 ---
 
@@ -13,6 +13,7 @@ The backend exposes a REST API under the **`/api`** prefix with MongoDB persiste
 ## Features
 
 - Register / login (JWT)
+- **Settings**: theme (dark/light), email notification toggle, change password
 - Create **savings** accounts
 - View profile, balances, and account list
 - **Deposit**, **withdraw**, **transfer** (savings)
@@ -151,6 +152,9 @@ Base URL: `http://localhost:5000/api`
 | POST | `/auth/register` | — | Register |
 | POST | `/auth/login` | — | Login |
 | GET | `/user/profile` | JWT | Profile |
+| GET | `/user/settings` | JWT | Preferences (theme, email notifications) |
+| PUT | `/user/settings` | JWT | Update preferences (`theme`, `emailNotifications`) |
+| PUT | `/user/password` | JWT | Change password (`currentPassword`, `newPassword`) |
 | GET | `/user/dashboard/summary` | JWT | Dashboard summary |
 | GET | `/user/analytics/spending` | JWT | Monthly spending (`?year=&month=`) |
 | POST | `/accounts/create` | JWT | Create savings account |

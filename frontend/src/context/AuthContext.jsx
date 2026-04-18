@@ -55,6 +55,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setToken(null);
     setUser(null);
+    document.body.classList.remove("theme-light");
   };
 
   const value = useMemo(

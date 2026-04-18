@@ -6,6 +6,56 @@ import { AuthRequest } from "../middleware/auth.middleware";
 const users = new UserService();
 const analytics = new AnalyticsService();
 
+export async function getSettings(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const data = await users.getSettings(req.user!.userId);
+    res.json({ success: true, data });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function updateSettings(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const body = req.body as {
+      theme?: "dark" | "light";
+      emailNotifications?: boolean;
+    };
+    const partial: { theme?: "dark" | "light"; emailNotifications?: boolean } = {};
+    if (body.theme !== undefined) partial.theme = body.theme;
+    if (body.emailNotifications !== undefined) partial.emailNotifications = body.emailNotifications;
+    const data = await users.updateSettings(req.user!.userId, partial);
+    res.json({ success: true, data });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function changePassword(
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const { currentPassword, newPassword } = req.body as {
+      currentPassword: string;
+      newPassword: string;
+    };
+    await users.changePassword(req.user!.userId, currentPassword, newPassword);
+    res.json({ success: true, message: "Password updated" });
+  } catch (e) {
+    next(e);
+  }
+}
+
 export async function profile(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
   try {
     const user = await users.getProfile(req.user!.userId);

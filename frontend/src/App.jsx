@@ -15,6 +15,9 @@ import Transfer from "./pages/Transfer";
 import Transactions from "./pages/Transactions";
 import FixedDeposit from "./pages/FixedDeposit";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
+import Cards from "./pages/Cards";
+import Analytics from "./pages/Analytics";
 
 export default function App() {
   return (
@@ -32,8 +35,11 @@ export default function App() {
               <Route path="/deposit" element={<Deposit />} />
               <Route path="/withdraw" element={<Withdraw />} />
               <Route path="/transfer" element={<Transfer />} />
+              <Route path="/cards" element={<Cards />} />
               <Route path="/transactions" element={<Transactions />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/fixed-deposit" element={<FixedDeposit />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Route>

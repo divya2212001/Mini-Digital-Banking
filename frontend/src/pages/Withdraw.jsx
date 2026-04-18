@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../services/api";
+import { useBankTheme } from "../hooks/useBankTheme";
 
 export default function Withdraw() {
+  const t = useBankTheme();
   const [accounts, setAccounts] = useState([]);
   const [accountId, setAccountId] = useState("");
   const [amount, setAmount] = useState("");
@@ -37,16 +39,12 @@ export default function Withdraw() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-2">Withdraw</h1>
-      <p className="text-slate-500 mb-8">Withdraw from a savings account.</p>
+      <h1 className={`text-2xl font-semibold mb-2 ${t.pageTitle}`}>Withdraw</h1>
+      <p className={`${t.pageSub} mb-8`}>Withdraw from a savings account.</p>
       <form onSubmit={submit} className="max-w-md space-y-4">
         <div>
-          <label className="block text-xs uppercase text-slate-500 mb-1">Account</label>
-          <select
-            className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-2"
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-          >
+          <label className={t.label}>Account</label>
+          <select className={t.select} value={accountId} onChange={(e) => setAccountId(e.target.value)}>
             {accounts.map((a) => (
               <option key={a.id} value={a.id}>
                 {a.accountNumber} — ${a.balance?.toFixed(2)}
@@ -55,31 +53,20 @@ export default function Withdraw() {
           </select>
         </div>
         <div>
-          <label className="block text-xs uppercase text-slate-500 mb-1">Amount</label>
+          <label className={t.label}>Amount</label>
           <input
             type="number"
             min="0"
             step="0.01"
-            className="w-full rounded-lg bg-slate-950 border border-slate-800 px-3 py-2"
+            className={t.input}
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             required
           />
         </div>
-        {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
-            {error}
-          </div>
-        )}
-        {msg && (
-          <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-            {msg}
-          </div>
-        )}
-        <button
-          type="submit"
-          className="rounded-lg bg-emerald-500 px-6 py-2 font-semibold text-slate-950 hover:bg-emerald-400"
-        >
+        {error && <div className={t.alertError}>{error}</div>}
+        {msg && <div className={t.alertSuccess}>{msg}</div>}
+        <button type="submit" className={t.primaryButton}>
           Withdraw
         </button>
       </form>

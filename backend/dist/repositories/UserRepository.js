@@ -12,5 +12,8 @@ class UserRepository {
     async findByEmail(email) {
         return User_model_1.UserModel.findOne({ email: email.toLowerCase() });
     }
+    async updateById(id, update) {
+        return User_model_1.UserModel.findByIdAndUpdate(id, update, { new: true });
+    }
 }
 exports.UserRepository = UserRepository;

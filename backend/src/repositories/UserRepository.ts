@@ -14,4 +14,11 @@ export class UserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<IUserDocument | null> {
     return UserModel.findOne({ email: email.toLowerCase() });
   }
+
+  async updateById(
+    id: string | Types.ObjectId,
+    update: Partial<IUserDocument>
+  ): Promise<IUserDocument | null> {
+    return UserModel.findByIdAndUpdate(id, update, { new: true });
+  }
 }

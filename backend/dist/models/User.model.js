@@ -36,6 +36,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const constants_1 = require("../config/constants");
+const UserSettingsSchema = new mongoose_1.Schema({
+    theme: { type: String, enum: ["dark", "light"], default: "dark" },
+    emailNotifications: { type: Boolean, default: true },
+}, { _id: false });
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -45,5 +49,6 @@ const UserSchema = new mongoose_1.Schema({
         enum: [constants_1.USER_ROLES.CUSTOMER],
         default: constants_1.USER_ROLES.CUSTOMER,
     },
+    settings: { type: UserSettingsSchema, default: () => ({}) },
 }, { timestamps: true });
 exports.UserModel = mongoose_1.default.models.User || mongoose_1.default.model("User", UserSchema);

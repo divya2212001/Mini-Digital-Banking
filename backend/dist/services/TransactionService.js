@@ -11,6 +11,15 @@ const ApiError_1 = require("../utils/ApiError");
 const EmailService_1 = require("./EmailService");
 const FraudDetectionService_1 = require("./FraudDetectionService");
 class TransactionService {
+    shouldSendTransactionEmail(user) {
+        if (!user) {
+            return false;
+        }
+        if (user.settings?.emailNotifications === false) {
+            return false;
+        }
+        return true;
+    }
     constructor(accounts = new AccountRepository_1.AccountRepository(), transactions = new TransactionRepository_1.TransactionRepository(), users = new UserRepository_1.UserRepository(), fraud = new FraudDetectionService_1.FraudDetectionService(), email = new EmailService_1.EmailService()) {
         this.accounts = accounts;
         this.transactions = transactions;
@@ -47,7 +56,7 @@ class TransactionService {
             suspiciousReason: fraud.reason,
         });
         const user = await this.users.findById(userId);
-        if (user) {
+        if (this.shouldSendTransactionEmail(user)) {
             this.email.notifyTransaction(user.email, "DEPOSIT", amount, acc.accountNumber);
         }
         return tx;
@@ -71,7 +80,7 @@ class TransactionService {
             suspiciousReason: fraud.reason,
         });
         const user = await this.users.findById(userId);
-        if (user) {
+        if (this.shouldSendTransactionEmail(user)) {
             this.email.notifyTransaction(user.email, "WITHDRAW", amount, acc.accountNumber);
         }
         return tx;
@@ -112,7 +121,7 @@ class TransactionService {
             suspiciousReason: fraud.reason,
         });
         const user = await this.users.findById(userId);
-        if (user) {
+        if (this.shouldSendTransactionEmail(user)) {
             this.email.notifyTransaction(user.email, "TRANSFER", amount, from.accountNumber);
         }
         return tx;

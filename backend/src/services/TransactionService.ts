@@ -8,10 +8,21 @@ import { AccountRepository } from "../repositories/AccountRepository";
 import { TransactionRepository } from "../repositories/TransactionRepository";
 import { UserRepository } from "../repositories/UserRepository";
 import { ApiError } from "../utils/ApiError";
+import { IUserDocument } from "../models/User.model";
 import { EmailService } from "./EmailService";
 import { FraudDetectionService } from "./FraudDetectionService";
 
 export class TransactionService {
+  private shouldSendTransactionEmail(user: IUserDocument | null): boolean {
+    if (!user) {
+      return false;
+    }
+    if (user.settings?.emailNotifications === false) {
+      return false;
+    }
+    return true;
+  }
+
   constructor(
     private readonly accounts: IAccountRepository = new AccountRepository(),
     private readonly transactions: ITransactionRepository = new TransactionRepository(),
@@ -50,8 +61,8 @@ export class TransactionService {
       suspiciousReason: fraud.reason,
     });
     const user = await this.users.findById(userId);
-    if (user) {
-      this.email.notifyTransaction(user.email, "DEPOSIT", amount, acc.accountNumber);
+    if (this.shouldSendTransactionEmail(user)) {
+      this.email.notifyTransaction(user!.email, "DEPOSIT", amount, acc.accountNumber);
     }
     return tx;
   }
@@ -75,8 +86,8 @@ export class TransactionService {
       suspiciousReason: fraud.reason,
     });
     const user = await this.users.findById(userId);
-    if (user) {
-      this.email.notifyTransaction(user.email, "WITHDRAW", amount, acc.accountNumber);
+    if (this.shouldSendTransactionEmail(user)) {
+      this.email.notifyTransaction(user!.email, "WITHDRAW", amount, acc.accountNumber);
     }
     return tx;
   }
@@ -126,8 +137,8 @@ export class TransactionService {
     });
 
     const user = await this.users.findById(userId);
-    if (user) {
-      this.email.notifyTransaction(user.email, "TRANSFER", amount, from.accountNumber);
+    if (this.shouldSendTransactionEmail(user)) {
+      this.email.notifyTransaction(user!.email, "TRANSFER", amount, from.accountNumber);
     }
     return tx;
   }

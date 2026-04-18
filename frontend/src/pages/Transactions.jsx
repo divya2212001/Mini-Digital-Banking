@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { api } from "../services/api";
+import { useBankTheme } from "../hooks/useBankTheme";
 
 export default function Transactions() {
+  const t = useBankTheme();
   const [accounts, setAccounts] = useState([]);
   const [accountId, setAccountId] = useState("");
   const [rows, setRows] = useState([]);
@@ -27,12 +29,12 @@ export default function Transactions() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-semibold">Transactions</h1>
-          <p className="text-slate-500 text-sm">History for the selected account.</p>
+          <h1 className={`text-2xl font-semibold ${t.pageTitle}`}>Transactions</h1>
+          <p className={`text-sm ${t.pageSub}`}>History for the selected account.</p>
         </div>
         <div className="flex gap-2">
           <select
-            className="rounded-lg bg-slate-950 border border-slate-800 px-3 py-2 text-sm"
+            className={`${t.select} text-sm py-2`}
             value={accountId}
             onChange={(e) => setAccountId(e.target.value)}
           >
@@ -42,9 +44,7 @@ export default function Transactions() {
               </option>
             ))}
           </select>
-          <button
-            type="button"
-            onClick={() => {
+          <button type="button" onClick={() => {
               const token = localStorage.getItem("token");
               const url = `${api.defaults.baseURL}/transactions/history/${accountId}/export-pdf`;
               fetch(url, { headers: { Authorization: `Bearer ${token}` } })
@@ -55,20 +55,18 @@ export default function Transactions() {
                   a.download = `statement-${accountId}.pdf`;
                   a.click();
                 });
-            }}
-            className="rounded-lg border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800"
-          >
+            }} className={t.secondaryButton}>
             Download PDF
           </button>
         </div>
       </div>
 
       {loading ? (
-        <p className="text-slate-500">Loading…</p>
+        <p className={t.mutedText}>Loading…</p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-800">
+        <div className={t.tableWrap}>
           <table className="min-w-full text-sm">
-            <thead className="bg-slate-900/80 text-left text-slate-400">
+            <thead className={t.thead}>
               <tr>
                 <th className="px-4 py-3">When</th>
                 <th className="px-4 py-3">Type</th>
@@ -77,25 +75,25 @@ export default function Transactions() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((t) => (
-                <tr key={t._id} className="border-t border-slate-800">
-                  <td className="px-4 py-3 text-slate-400">
-                    {new Date(t.timestamp).toLocaleString()}
+              {rows.map((row) => (
+                <tr key={row._id} className={t.rowBorder}>
+                  <td className={`px-4 py-3 ${t.cellMuted}`}>
+                    {new Date(row.timestamp).toLocaleString()}
                   </td>
-                  <td className="px-4 py-3">{t.type}</td>
-                  <td className="px-4 py-3">${t.amount?.toFixed(2)}</td>
+                  <td className={`px-4 py-3 ${t.tableCell}`}>{row.type}</td>
+                  <td className={`px-4 py-3 ${t.tableCell}`}>${row.amount?.toFixed(2)}</td>
                   <td className="px-4 py-3">
-                    {t.suspicious ? (
-                      <span className="text-amber-400 text-xs">Yes</span>
+                    {row.suspicious ? (
+                      <span className="text-amber-500 text-xs font-medium">Yes</span>
                     ) : (
-                      <span className="text-slate-600">—</span>
+                      <span className={t.mutedText}>—</span>
                     )}
                   </td>
                 </tr>
               ))}
               {!rows.length && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-slate-500">
+                  <td colSpan={4} className={`px-4 py-8 text-center ${t.mutedText}`}>
                     No transactions yet.
                   </td>
                 </tr>
