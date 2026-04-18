@@ -1,54 +1,91 @@
 # Mini Digital Banking System
 
-## Project Overview
+A full-stack **digital banking demo** with a **TypeScript / Express** backend (clean architecture, OOP, design patterns) and a **React (JavaScript)** + **Tailwind CSS** frontend. It demonstrates JWT authentication, savings operations, transfers, fixed deposits, fraud flagging on transactions, PDF statements, and simulated email logging.
 
-Mini Digital Banking System is a full-stack banking application that simulates core digital banking operations. The system provides a complete digital banking experience with account management, money transfers, transaction tracking, fixed deposits, and administrative controls.
+---
 
-The primary focus of this project is on backend architecture, applying Object-Oriented Programming (OOP) principles, clean code structure, and appropriate design patterns to create a robust and scalable banking system.
+## Project overview
+
+The backend exposes a REST API under the **`/api`** prefix with MongoDB persistence. The frontend is a Vite SPA served on port **5173** by default, talking to the API on port **5000**.
 
 ---
 
 ## Features
 
-### Customer Features
+- Register / login (JWT)
+- Create **savings** accounts
+- View profile, balances, and account list
+- **Deposit**, **withdraw**, **transfer** (savings)
+- Transaction history with **PDF download** (includes fraud flags when applicable)
+- **Fixed deposits** (6 / 12 / 24 months)
+- Dashboard with **balance summary**, **monthly spending**, and **charts**
 
-- **User Registration & Login** - Secure authentication using JWT tokens
-- **Create Savings Account** - Open new savings accounts with initial deposits
-- **View Account Balance** - Check current balance for all accounts
-- **Deposit Money** - Add funds to any account
-- **Withdraw Money** - Remove funds from accounts (with validation)
-- **Transfer Money** - Send money to other accounts securely
-- **View Transaction History** - Access complete transaction records
+### Cross-cutting
 
-### Admin Features
-
-- **View All Users** - Browse and search all registered users
-- **Freeze Account** - Suspend account activities for security
-- **Activate Account** - Restore account access after review
-- **Monitor Transactions** - Track all system transactions
+- Password hashing (**bcrypt**), validation (**express-validator**), global + auth **rate limiting**
+- **Fraud detection**: transactions above `FRAUD_AMOUNT_THRESHOLD` are flagged (visible on statements and in transaction history)
+- **Email simulation**: append-only log file under `backend/src/logs/email-sim.log`
+- **Monthly spending analytics** aggregated in MongoDB
 
 ---
 
-## Tech Stack
+## Tech stack
 
-### Frontend
+| Layer    | Stack |
+|----------|--------|
+| Frontend | React 19, JavaScript, Vite, Tailwind CSS, Axios, React Router, Recharts |
+| Backend  | Node.js, Express 5, TypeScript, Mongoose, JWT, bcrypt, dotenv |
+| Database | MongoDB |
 
-| Technology  | Purpose      |
-| ----------- | ------------ |
-| React       | UI Framework |
-| TailwindCSS | Styling      |
-| Vite        | Build Tool   |
+---
 
-### Backend
+## Folder structure
 
-| Technology | Purpose             |
-| ---------- | ------------------- |
-| Node.js    | Runtime Environment |
-| Express.js | Web Framework       |
-| MongoDB    | Database            |
-| Mongoose   | ODM                 |
-| JWT        | Authentication      |
-| bcrypt     | Password Hashing    |
+### Backend (`backend/src/`)
+
+| Path | Purpose |
+|------|---------|
+| `config/` | Singleton DB connection, constants |
+| `controllers/` | HTTP handlers |
+| `services/` | Business logic (services + fraud, PDF, email sim) |
+| `repositories/` | Data access (Mongo / Mongoose) |
+| `models/` | Mongoose schemas |
+| `routes/` | Express routers |
+| `middleware/` | Auth, RBAC (customer), validation result, errors, rate limit |
+| `interfaces/` | Abstract contracts for repositories / services |
+| `factories/` | Account factory (savings / FD) |
+| `classes/` | **OOP** domain: `User`, `Customer`, `Account`, `SavingsAccount`, `FixedDepositAccount` |
+| `utils/` | JWT helpers, errors, account number generator |
+| `validators/` | express-validator chains |
+| `logs/` | Runtime logs (e.g. simulated email) |
+
+### Frontend (`frontend/src/`)
+
+| Path | Purpose |
+|------|---------|
+| `components/` | `ProtectedRoute`, etc. |
+| `pages/` | Public + authenticated customer screens |
+| `layouts/` | Sidebar layout |
+| `context/` | `AuthProvider` / JWT in `localStorage` |
+| `services/` | Axios client with interceptors |
+
+---
+
+## OOP concepts (backend)
+
+- **Encapsulation**: `Account` keeps a **private** balance; only `deposit()` / `withdraw()` mutate it.
+- **Inheritance**: abstract `User` with concrete `Customer`.
+- **Polymorphism**: `SavingsAccount` and `FixedDepositAccount` implement `calculateInterest()` differently.
+- **Abstraction**: repository interfaces (`IUserRepository`, `IAccountRepository`, …) and service interfaces (`IAuthService`, `IAccountService`).
+
+---
+
+## Design patterns
+
+- **Singleton**: `DatabaseConnectionManager` for a single Mongoose connection lifecycle.
+- **Factory**: `AccountFactory` creates savings vs FD accounts and coordinates persistence.
+- **Repository**: Mongoose queries isolated per aggregate.
+- **Service layer**: controllers stay thin; rules live in services.
 
 ---
 
@@ -56,274 +93,95 @@ The primary focus of this project is on backend architecture, applying Object-Or
 
 ### Prerequisites
 
-- Node.js (v20 or higher recommended)
-- MongoDB (local installation or MongoDB Atlas)
-- npm or yarn package manager
+- **Node.js** 18+
+- **MongoDB** 6+ (local or Atlas)
 
-### Backend Setup
+### 1. Clone and install
 
-1. Navigate to the backend directory:
+```bash
+cd Mini-Digital-Banking
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+Edit `backend/.env` with a real `MONGO_URI` and `JWT_SECRET`.
+
+```bash
+cd backend && npm install
+cd ../frontend && npm install
+```
+
+### 2. Run MongoDB
+
+Example (local):
+
+```bash
+mongod --dbpath /path/to/data
+```
+
+### 3. Start servers
+
+**Terminal A — API**
 
 ```bash
 cd backend
-npm init -y
-```
-
-2. Install dependencies:
-
-```bash
-nvm install 20
-nvm use 20
-npm install express mongoose cors dotenv jsonwebtoken bcrypt
-npm install -D typescript ts-node-dev @types/node @types/express @types/jsonwebtoken @types/bcrypt
-npx tsc --init
-npm install cors
-npm install -D @types/cors
-npx tsc --init
-```
-
-3. Configure environment variables (create .env file in backend directory):
-
-```env
-PORT=3001
-MONGODB_URI=mongodb://localhost:3001/mini-banking
-JWT_SECRET=your-secret-key
-```
-
-4. Start the backend development server:
-
-```bash
 npm run dev
 ```
 
-The backend will run on http://localhost:3001
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
+**Terminal B — SPA**
 
 ```bash
 cd frontend
-npm create vite@latest frontend
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-npm install -D tailwindcss@3 postcss autoprefixer
-npx tailwindcss init -p
-```
-
-3. Start the frontend development server:
-
-```bash
 npm run dev
 ```
 
-The frontend will typically run on http://localhost:5173/
+- Frontend: `http://localhost:5173`
+- API: `http://localhost:5000` (health: `GET /health`)
 
-### Building for Production
-
-**Backend:**
-
-```bash
-cd backend
-npm run build
-npm start
-```
-
-**Frontend:**
-
-```bash
-cd frontend
-npm run build
-```
+**Local dev & CORS:** With the default setup, axios uses **`/api`** as `baseURL`, and **Vite proxies** that to `http://localhost:5000`, so the browser stays on port **5173** (no cross-origin requests). Leave **`VITE_API_URL` unset** in dev. If you set `VITE_API_URL` to a full URL like `http://localhost:5000/api`, the browser calls the API directly; keep **`CLIENT_ORIGIN=http://localhost:5173`** in `backend/.env` so CORS allows your app.
 
 ---
 
-## Implementation Details
+## API endpoints
 
-### Architecture
+Base URL: `http://localhost:5000/api`
 
-The project follows a **Layered Architecture** pattern with clear separation of concerns:
-
-```
-Client Request → Controller → Service → Repository → Database
-                     ↓
-               Middleware (Auth)
-```
-
-### Backend Implementation
-
-**Controllers** - Handle incoming HTTP requests and return responses
-
-- AuthController - User registration and login
-- AccountController - Account operations
-- TransactionController - Money transfers, deposits, withdrawals
-- AdminController - Administrative functions
-
-**Services** - Contain business logic
-
-- AuthService - JWT token generation, password hashing
-- AccountService - Account creation, balance management
-- TransactionService - Transfer logic, transaction validation
-- AdminService - User management, account control
-
-**Repositories** - Handle database operations
-
-- UserRepository - User CRUD operations
-- AccountRepository - Account data management
-- TransactionRepository - Transaction persistence
-- AuditLogRepository - Audit trail management
-
-**Middleware** - Request preprocessing
-
-- AuthMiddleware - JWT token verification
-- ValidationMiddleware - Input validation
-
-### OOP Principles Applied
-
-1. **Encapsulation** - Private account balance with controlled deposit/withdraw methods
-2. **Abstraction** - Service interfaces hide implementation details
-3. **Inheritance** - Customer and Admin extend User; SavingsAccount extends Account
-4. **Polymorphism** - Interest calculation varies by account type
-
-### Design Patterns Used
-
-1. **Factory Pattern** - AccountFactory creates different account types
-2. **Repository Pattern** - Abstracts database operations from business logic
-3. **Service Layer Pattern** - Separates business logic from controllers
-
-### Database Schema
-
-**Entities:**
-
-- **User** - Base user information (name, email, password)
-- **Account** - Banking accounts with balance and status
-- **Transaction** - All money movements (deposits, withdrawals, transfers)
-- **AuditLog** - System activity tracking
-- **FixedDeposit** - Fixed deposit investments
-
-**Relationships:**
-
-- User (1) → Account (M) - One user can have multiple accounts
-- Account (1) → Transaction (M) - Each account has transaction history
-- Account (1) → FixedDeposit (M) - Accounts can have multiple FD investments
-- Admin (1) → AuditLog (M) - All admin actions are logged
-
-### Security Features
-
-- JWT-based authentication
-- Password hashing with bcrypt
-- Account freeze/activate functionality
-- Transaction validation
-- Audit logging for all operations
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/auth/register` | — | Register |
+| POST | `/auth/login` | — | Login |
+| GET | `/user/profile` | JWT | Profile |
+| GET | `/user/dashboard/summary` | JWT | Dashboard summary |
+| GET | `/user/analytics/spending` | JWT | Monthly spending (`?year=&month=`) |
+| POST | `/accounts/create` | JWT | Create savings account |
+| GET | `/accounts/my` | JWT | List accounts |
+| GET | `/accounts/balance/:id` | JWT | Balance |
+| POST | `/transactions/deposit` | JWT | Deposit |
+| POST | `/transactions/withdraw` | JWT | Withdraw |
+| POST | `/transactions/transfer` | JWT | Transfer |
+| GET | `/transactions/history/:id` | JWT | History |
+| GET | `/transactions/history/:id/export-pdf` | JWT | PDF statement |
+| POST | `/fd/create` | JWT | Create FD |
+| GET | `/fd/my` | JWT | List FDs |
 
 ---
 
-## Project Structure
+## Screenshots
 
-```
-Mini-Digital-Banking/
-|
-├── backend/                      # Backend API Server
-│   ├── src/
-│   │   ├── config/              # Configuration files
-│   │   ├── controllers/        # HTTP request handlers
-│   │   │   ├── authController.ts
-│   │   │   ├── accountController.ts
-│   │   │   ├── transactionController.ts
-│   │   │   └── adminController.ts
-│   │   ├── factories/           # Factory pattern implementations
-│   │   ├── interfaces/         # TypeScript interfaces
-│   │   ├── middleware/         # Express middleware
-│   │   │   └── authMiddleware.ts
-│   │   ├── models/             # Mongoose models
-│   │   │   ├── User.ts
-│   │   │   ├── Account.ts
-│   │   │   ├── Transaction.ts
-│   │   │   └── AuditLog.ts
-│   │   ├── repositories/       # Data access layer
-│   │   │   ├── userRepository.ts
-│   │   │   ├── accountRepository.ts
-│   │   │   └── transactionRepository.ts
-│   │   ├── routes/             # API route definitions
-│   │   ├── services/           # Business logic layer
-│   │   │   ├── authService.ts
-│   │   │   ├── accountService.ts
-│   │   │   └── transactionService.ts
-│   │   ├── utils/              # Utility functions
-│   │   ├── app.ts              # Express app configuration
-│   │   └── server.ts           # Server entry point
-│   ├── package.json
-│   └── tsconfig.json
-|
-├── frontend/                     # React Frontend Application
-│   ├── src/
-│   │   ├── assets/             # Static assets
-│   │   ├── App.css             # Main app styles
-│   │   ├── App.jsx             # Main app component
-│   │   ├── index.css           # Global styles
-│   │   └── main.jsx            # React entry point
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   └── tailwind.config.js
-|
-├── Readme.md                    # This file
-├── classDiagram.md              # UML class diagram
-├── ErDiagram.md                # Entity relationship diagram
-├── sequenceDiagram.md          # Sequence diagram for transfers
-├── useCaseDiagram.md           # Use case diagram
-└── idea.md                     # Project idea and specifications
-```
+Place screenshots under `docs/screenshots/` (create the folder if needed) and add:
+
+| Placeholder | Suggested capture |
+|-------------|-------------------|
+| `docs/screenshots/home.png` | Landing page |
+| `docs/screenshots/dashboard.png` | Customer dashboard |
 
 ---
 
-## API Endpoints
+## Security notes
 
-### Authentication
-
-| Method | Endpoint           | Description       |
-| ------ | ------------------ | ----------------- |
-| POST   | /api/auth/register | Register new user |
-| POST   | /api/auth/login    | Login user        |
-
-### Accounts
-
-| Method | Endpoint                  | Description         |
-| ------ | ------------------------- | ------------------- |
-| POST   | /api/accounts             | Create new account  |
-| GET    | /api/accounts/:id         | Get account details |
-| GET    | /api/accounts/:id/balance | Get account balance |
-
-### Transactions
-
-| Method | Endpoint                             | Description             |
-| ------ | ------------------------------------ | ----------------------- |
-| POST   | /api/transactions/deposit            | Deposit money           |
-| POST   | /api/transactions/withdraw           | Withdraw money          |
-| POST   | /api/transactions/transfer           | Transfer money          |
-| GET    | /api/transactions/history/:accountId | Get transaction history |
-
-### Admin
-
-| Method | Endpoint                         | Description      |
-| ------ | -------------------------------- | ---------------- |
-| GET    | /api/admin/users                 | View all users   |
-| PUT    | /api/admin/accounts/:id/freeze   | Freeze account   |
-| PUT    | /api/admin/accounts/:id/activate | Activate account |
+This demo is **not** production banking software. It is intended for **portfolio / learning** use. Harden TLS, secrets management, auditing, and regulatory controls before any real deployment.
 
 ---
 
-## Key Engineering Concepts
 
-- **ACID-Compliant Transactions** - Ensures reliable database operations
-- **Double-Entry Bookkeeping** - Every transaction has debit and credit entries
-- **JWT Authentication** - Stateless secure authentication
-- **Transaction Atomicity** - Operations complete fully or not at all
-- **Audit Logging** - Complete trail of all system activities
-- **Concurrency Handling** - Manages simultaneous transactions
 
----
