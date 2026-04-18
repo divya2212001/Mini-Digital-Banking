@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://mini-digital-banking-1.onrender.com',
+        target: 'https://mini-digital-banking-1.onrender.com/api',
         changeOrigin: true,
         secure: false,
       },
