@@ -2,7 +2,7 @@ import axios from "axios";
 
 const baseURL =
   import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? "/api" : "https://mini-digital-banking-1.onrender.com/api");
+  (import.meta.env.DEV ? "/api" : "https://mini-digital-banking.onrender.com/api");
 
 export const api = axios.create({
   baseURL,
