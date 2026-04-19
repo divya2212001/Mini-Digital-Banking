@@ -170,16 +170,6 @@ Base URL: `http://localhost:5000/api`
 
 ---
 
-## Screenshots
-
-Place screenshots under `docs/screenshots/` (create the folder if needed) and add:
-
-| Placeholder | Suggested capture |
-|-------------|-------------------|
-| `docs/screenshots/home.png` | Landing page |
-| `docs/screenshots/dashboard.png` | Customer dashboard |
-
----
 
 ## Security notes
 
