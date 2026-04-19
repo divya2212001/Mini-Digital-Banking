@@ -7,17 +7,21 @@ import { globalLimiter } from "./middleware/rateLimiter.middleware";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://mini-digital-banking-site-main-divya2212001s-projects.vercel.app",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    if (
+      origin.startsWith("http://localhost") ||
+      origin.endsWith(".vercel.app")
+    ) {
+      return callback(null, true);
+    }
+
+    callback(null, false);
+  },
+  credentials: true
+}));
 
 app.options(/.*/, cors());
 app.use(express.json({ limit: "1mb" }));
